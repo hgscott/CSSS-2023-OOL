@@ -7,6 +7,10 @@ directory = 'GEMs'
 
 # Load in the universal graph
 G = nx.read_graphml('core_network.graphml')
+
+# Give edge a weight of 0
+for edge in G.edges():
+    G.edges[edge]['weight'] = 0
  
 # Loop through all the GEMs
 for filename in os.listdir(directory):
@@ -28,11 +32,9 @@ for filename in os.listdir(directory):
                 # TODO: Throw a warning
                 continue
             # Increase the weight of all the edges to/from that reaction by 1
-            for cpd_info in rxn['stoichiometry'].split(';'):
-                cpd_id = cpd_info.split(':')[1]
-                if cpd_id not in G.nodes():
-                    G.add_node(cpd_id, bipartite='compound') # TODO: Add info from the met_json
-                if float(cpd_info.split(':')[0]) < 0:
-                    G.add_edge(cpd_id, rxn['id'], stoich=cpd_info.split(':')[0])
-                else:
-                    G.add_edge(rxn['id'], cpd_id, stoich=cpd_info.split(':')[0])
+            # Assuming that a reaction alwys has the same stoichiometry
+            for edge in G.edges(rxn_id):
+                G.edges[edge]['weight'] += 1
+
+# Save the graph
+nx.write_graphml(G, 'core_network_weighted.graphml')
