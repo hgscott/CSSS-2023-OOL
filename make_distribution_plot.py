@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 G = nx.read_graphml('core_network_weighted.graphml')
 
 # Plot the distribution of weights
+# Should I do all edges or just the one per reaction?
 plt.hist([G.edges[edge]['weight'] for edge in G.edges()])
 
 # Save the plot
